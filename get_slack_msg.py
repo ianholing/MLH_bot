@@ -2,11 +2,12 @@ import os
 import json
 
 import pandas as pd
+import unidecode
 
 #Unico parametro a configurar. PATH hacia la carpeta de descarga proporcionada por @Santi Iglesias
 #https://drive.google.com/open?id=1RQz2jxV9T3Sv_B5D7wSB8Zux6P0gIS8-
 
-channels_folder_path = 'chat_stream'
+channels_folder_path = '../Data' # 'chat_stream'
 
 channels = [d for d in os.listdir(channels_folder_path) if os.path.isdir(os.path.join(channels_folder_path, d))]
 
@@ -24,7 +25,7 @@ for channel_name in channels:
 
         for msg in messages:
             if 'subtype' not in msg:
-                row = pd.Series([channel_name, msg.get('user'), msg.get('text')], index=df.columns)
+                row = pd.Series([channel_name, msg.get('user'), unidecode.unidecode(msg.get('text')).encode('ascii')], index=df.columns)
                 df = df.append(row,
                                ignore_index=True)
 
