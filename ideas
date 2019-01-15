@@ -1,1 +1,9 @@
-++ Añadir entrenamiento en batches
+- Preprocesamiento:
+	+ Quitar nombres de usuarios, porque los mete como <@(id)> y nos sirve para nada. 
+
+- Entrenamiento:
+	+ Añadir entrenamiento en batches
+
+- Generación de texto:
+	+ Le digo que cuando encuentre alguno de los símbolos ['.', '?', '!'] deje de escribir. 
+	Esto excluye los links por ejemplo... buscar una forma mejor.
