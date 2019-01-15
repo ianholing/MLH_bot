@@ -1,26 +1,43 @@
 import torch
+import torch.nn as nn
 from torch.autograd import Variable
 
 import pickle
-from model import LSTMNN
+
+class LSTMNN(nn.Module):
+	def __init__(self, nchars, hid_s, n_layer):
+		super(LSTMNN,self).__init__()
+
+		self.nchars = nchars # Numero de caracteres.
+		self.hid_s = hid_s # Neuronas en la capa oculta.
+		self.n_layer = n_layer # Numero de capas recurrentes.
+
+		self.encoder = nn.Embedding(self.nchars, self.hid_s)
+		self.decoder = nn.Linear(self.hid_s, self.nchars)
+		self.LSTM = nn.LSTM(self.hid_s, self.hid_s, self.n_layer)
+
+	def forward(self, inp, hidden):
+		batch = inp.size(0)
+		y = self.encoder(inp).view(1, batch, -1)
+		y, hidden = self.LSTM(y, hidden)
+		y = self.decoder(y.view(batch,-1))
+		return y, hidden
+
+	def init_hidden(self,batch):
+		h = Variable(torch.zeros(self.n_layer, batch, self.hid_s))
+
 
 def load_antonIA():
-	# Cargar diccionarios de conversion int<->char
-	with open('char2int.pkl', 'rb') as f:
-		char2int = pickle.load(f)
-
-	with open('int2char.pkl', 'rb') as f:
-		int2char = pickle.load(f)
+	# Cargar estructura de la red, parametros y diccionarios char<->int.
+	data_dict = torch.load('antonIA.pth', map_location=torch.device('cpu'))
 
 	# Generar modelo y cargar parametros:
-	data_dict = torch.load('checkpoint.pth', map_location=torch.device('cpu'))
-
 	nchars, hs, nl = data_dict['structure']
 	model = LSTMNN(nchars, hs, nl)
 	model.load_state_dict(data_dict['state_dict'])
 	model.eval()
 
-	return model, char2int, int2char
+	return model, data_dict['char2int'], data_dict['int2char']
 
 def answer(model, char2int, int2char, msg):
 	# Caracteres para terminar una frase:

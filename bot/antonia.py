@@ -3,6 +3,7 @@ import time
 import re
 from slackclient import SlackClient
 import credentials as C
+from func4antonIA import *
 
 RTM_READ_DELAY = 5 # 1 second delay between reading from RTM
 COMMANDS = {
@@ -17,6 +18,9 @@ MENTION_REGEX = "^<@(|[WU].+?)>(.*)"
 
 
 slack_client = SlackClient(C.ANTONIA_OAUTH_TOKEN)
+
+# Cargar parametros y diccionarios de conversion char<->int.
+model, char2int, int2char = load_antonIA()
 
 def parse_bot_commands(slack_events):
     #print (slack_events)
@@ -43,12 +47,13 @@ def parse_direct_mention(message_text):
     return (matches.group(1), matches.group(2).strip()) if matches else (None, None)
 
 def handle_command(command, channel):
-    response = "Perdona pero tengo la IA un poco floja.. los del canal #banco_de_proyectos no me están dando mucha caña eeeeeeh!! (guiño guiño), no sé qué es: " + command
+    #response = "Perdona pero tengo la IA un poco floja.. los del canal #banco_de_proyectos no me están dando mucha caña eeeeeeh!! (guiño guiño), no sé qué es: " + command
 
     for i in range(len(COMMANDS)):
         if list(COMMANDS.keys())[i] in command:
             response = list(COMMANDS.values())[i]
 
+    response = answer(model, char2int, int2char, command)
     # Sends the response back to the channel
     slack_client.api_call(
         "chat.postMessage",
@@ -68,4 +73,3 @@ if __name__ == "__main__":
             time.sleep(RTM_READ_DELAY)
     else:
         print("Connection failed. Exception traceback printed above.")
-

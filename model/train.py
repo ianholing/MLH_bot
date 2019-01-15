@@ -98,7 +98,7 @@ for epoch in range(args.mepoch):
 
 	if epoch %100 == 0:
 		generate(model, char2int, int2char, 100, cuda=args.cuda)
-		print 'Epoch {}, loss {}'.format(epoch, loss.data.item())
+		print('Epoch {}, loss {}'.format(epoch, loss.data.item()))
 		model.train()
 
 		# Save checkpoint:

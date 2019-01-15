@@ -9,14 +9,14 @@ letra a indice y el otro para la conversion inversa.
 path_to_csv = '../mensajes_slack.csv' #path al csv generado con "get_slack_msg.py"
 
 text = ''
-with open(path_to_csv, 'rb') as f:
+with open(path_to_csv, 'r') as f:
 	data_file = csv.reader(f)
 
 	for row in data_file:
-		text += row[2]
+		text += row[2] + ''
 
 # Texto en minuscula
-text = text.lower()
+#text = text.lower()
 
 # Guardar el texto en un fichero. 
 # Solo contiene los mensajes.
