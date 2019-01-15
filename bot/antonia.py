@@ -20,7 +20,8 @@ MENTION_REGEX = "^<@(|[WU].+?)>(.*)"
 slack_client = SlackClient(C.ANTONIA_OAUTH_TOKEN)
 
 # Cargar parametros y diccionarios de conversion char<->int.
-model, char2int, int2char = load_antonIA()
+antonIA='../model/antonIA.pth'
+model, char2int, int2char = load_antonIA(antonIA)
 
 def parse_bot_commands(slack_events):
     #print (slack_events)

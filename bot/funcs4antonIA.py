@@ -30,10 +30,10 @@ class LSTMNN(nn.Module):
 		return (h, h)
 
 
-def load_antonIA():
+def load_antonIA(path):
 	# Cargar estructura de la red, parametros y diccionarios char<->int.
-	data_dict = torch.load('checkpoint.pth', map_location=torch.device('cpu'))
-	#data_dict = torch.load('antonIA.pth', map_location=torch.device('cpu'))
+	# path: directorio donde se encuentran almacenados los parámetros.
+	data_dict = torch.load(path, map_location=torch.device('cpu'))
 
 	# Generar modelo y cargar parametros:
 	nchars, hs, nl = data_dict['structure']
