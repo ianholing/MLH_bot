@@ -57,6 +57,10 @@ with open('char2int.pkl', 'rb') as f:
 with open('int2char.pkl', 'rb') as f:
 	int2char = pickle.load(f)
 
+# Guardar los diccionarios en 'data_dict'
+data_dict['char2int'] = char2int
+data_dict['int2char'] = int2char
+
 nchars = len(char2int.keys())
 
 # Generar puntos input - output
