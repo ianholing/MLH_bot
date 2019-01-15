@@ -72,7 +72,6 @@ def answer(model, char2int, int2char, msg):
 	answer = ''
 	while inp.item() not in end or it == 0:
 		char_list, hidden = model(inp, hidden)
-		char_list = apply_temperature(char_list, temperature=0.5)
 		_, next_char = char_list.max(1)
 
 		answer += int2char[next_char.item()]
@@ -89,7 +88,3 @@ def answer(model, char2int, int2char, msg):
 		it += 1
 
 	return answer
-
-def apply_temperature(out, temperature=1):
-	out = out**(1/temperature)
-	return out/torch.sum(out)
