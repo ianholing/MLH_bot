@@ -44,6 +44,8 @@ def get_train_set(text, text_len, char2int):
 
 	return Variable(inp), Variable(out)
 
+# Diccionario donde guardaremos los parametros de la red asi como su estructura
+data_dict = {}
 
 train_set = 'text_dataset.txt'
 text, text_len = read_text(train_set)
@@ -62,6 +64,7 @@ inp, out = get_train_set(text, text_len, char2int)
 
 # Definimos el modelo a entrenar:
 model = LSTMNN(nchars, args.hs, args.nl)
+data_dict['structure'] = nchars, args.hs, args.nl
 
 # Definimos el algoritmo de minimizacion:
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
@@ -89,7 +92,16 @@ for epoch in range(args.mepoch):
 	loss.backward()
 	optimizer.step()
 
-	if epoch %10 == 0:
+	if epoch %100 == 0:
 		generate(model, char2int, int2char, 100, cuda=args.cuda)
 		print 'Epoch {}, loss {}'.format(epoch, loss.data.item())
 		model.train()
+
+		# Save checkpoint:
+		data_dict['state_dict'] = model.state_dict()
+		torch.save(data_dict,'checkpoint.pth')
+
+# Guardar los parametros del modelo entrenado:
+model_name = 'antonIA.pth'
+data_dict['state_dict'] = model.state_dict()
+torch.save(data_dict, model_name)
