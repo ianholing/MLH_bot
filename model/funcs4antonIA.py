@@ -15,21 +15,25 @@ class LSTMNN(nn.Module):
 		self.encoder = nn.Embedding(self.nchars, self.hid_s)
 		self.decoder = nn.Linear(self.hid_s, self.nchars)
 		self.LSTM = nn.LSTM(self.hid_s, self.hid_s, self.n_layer)
+		self.softmax = nn.Softmax(dim=1)
 
 	def forward(self, inp, hidden):
 		batch = inp.size(0)
 		y = self.encoder(inp).view(1, batch, -1)
 		y, hidden = self.LSTM(y, hidden)
 		y = self.decoder(y.view(batch,-1))
+		y = self.softmax(y)
 		return y, hidden
 
 	def init_hidden(self,batch):
 		h = Variable(torch.zeros(self.n_layer, batch, self.hid_s))
+		return (h, h)
 
 
 def load_antonIA():
 	# Cargar estructura de la red, parametros y diccionarios char<->int.
-	data_dict = torch.load('antonIA.pth', map_location=torch.device('cpu'))
+	data_dict = torch.load('checkpoint.pth', map_location=torch.device('cpu'))
+	#data_dict = torch.load('antonIA.pth', map_location=torch.device('cpu'))
 
 	# Generar modelo y cargar parametros:
 	nchars, hs, nl = data_dict['structure']
@@ -58,7 +62,7 @@ def answer(model, char2int, int2char, msg):
 	hidden = model.init_hidden(1)
 
 	# Generar el hidden state pasando como input el mensaje (msg).
-	for elem in xrange(len(msg) - 1):
+	for elem in range(len(msg) - 1):
 		_, hidden = model(inp[:,elem], hidden)
 
 	# Comenzar a generar la respuesta:
@@ -68,13 +72,14 @@ def answer(model, char2int, int2char, msg):
 	answer = ''
 	while inp.item() not in end or it == 0:
 		char_list, hidden = model(inp, hidden)
+		char_list = apply_temperature(char_list, temperature=0.5)
 		_, next_char = char_list.max(1)
 
 		answer += int2char[next_char.item()]
 
 		if it > 300:
 			# Por si no aparece un simbolo de terminar en mucho tiempo.
-			answer += '... bueno, me estoy enrollando. Un placer!'
+			answer += '... bueno, me estoy enrollando. ¡Un placer!'
 			break
 
 		inp = torch.zeros(1,1).long()
@@ -84,3 +89,7 @@ def answer(model, char2int, int2char, msg):
 		it += 1
 
 	return answer
+
+def apply_temperature(out, temperature=1):
+	out = out**(1/temperature)
+	return out/torch.sum(out)
