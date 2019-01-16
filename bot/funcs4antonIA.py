@@ -15,14 +15,12 @@ class LSTMNN(nn.Module):
 		self.encoder = nn.Embedding(self.nchars, self.hid_s)
 		self.decoder = nn.Linear(self.hid_s, self.nchars)
 		self.LSTM = nn.LSTM(self.hid_s, self.hid_s, self.n_layer)
-		self.softmax = nn.Softmax(dim=1)
 
 	def forward(self, inp, hidden):
 		batch = inp.size(0)
 		y = self.encoder(inp).view(1, batch, -1)
 		y, hidden = self.LSTM(y, hidden)
 		y = self.decoder(y.view(batch,-1))
-		y = self.softmax(y)
 		return y, hidden
 
 	def init_hidden(self,batch):
