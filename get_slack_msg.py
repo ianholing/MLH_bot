@@ -6,7 +6,7 @@ import pandas as pd
 #Unico parametro a configurar. PATH hacia la carpeta de descarga proporcionada por @Santi Iglesias
 #https://drive.google.com/open?id=1RQz2jxV9T3Sv_B5D7wSB8Zux6P0gIS8-
 
-channels_folder_path = 'chat_stream'
+channels_folder_path = '../Data' # 'chat_stream'
 
 channels = [d for d in os.listdir(channels_folder_path) if os.path.isdir(os.path.join(channels_folder_path, d))]
 
