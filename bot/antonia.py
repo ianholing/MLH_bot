@@ -2,6 +2,7 @@ import os
 import time
 import re
 from slackclient import SlackClient
+from random import randint
 import credentials as C
 from funcs4antonIA import *
 
@@ -24,13 +25,16 @@ HOT_REPLY = {
 
 MENTION_REGEX = "^<@(|[WU].+?)>(.*)"
 slack_client = SlackClient(C.ANTONIA_OAUTH_TOKEN)
+random_reply_counter = randint(20, 150)
+
 
 # Cargar parametros y diccionarios de conversion char<->int.
 antonIA='../model/antonIA.pth'
 model, char2int, int2char = load_antonIA(antonIA)
 
 def parse_bot_commands(slack_events):
-    #print (slack_events)
+    global random_reply_counter
+    
     for event in slack_events:
         if event["type"] == "message" and not "subtype" in event:
             user_id, message = parse_direct_mention(event["text"])
@@ -38,6 +42,8 @@ def parse_bot_commands(slack_events):
                 return message, event["channel"]
             
             message = event["text"].lower()
+
+            # HOT REPLIES
             for i in range(len(HOT_REPLY)):
                 if list(HOT_REPLY.keys())[i] in message:
                     # Sends the response back to the channel
@@ -46,7 +52,14 @@ def parse_bot_commands(slack_events):
                         channel=event["channel"],
                         text=list(HOT_REPLY.values())[i]
                     )
-
+                    return None, None
+            
+            # RANDOM REPLIES
+            random_reply_counter -= 1
+            print (random_reply_counter)
+            if random_reply_counter < 0 and message is not None and event["channel"] is not None:
+                random_reply_counter = randint(20, 150)
+                return message, event["channel"]
     return None, None
 
 def parse_direct_mention(message_text):
