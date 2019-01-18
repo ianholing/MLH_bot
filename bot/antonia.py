@@ -14,7 +14,6 @@ COMMANDS = {
         '¿estás ahí?': 'Ye',
 }
 
-#HOT_REPLY = dict.fromkeys(["aiga","haiga","llendo","A parte","si quiera","contra más","contra menos"], "escribe bien, que te meto un guanntazo")
 HOT_REPLY = {
         'sofia': 'Ojo! Sofia es colegui ;)',
         'sophie': 'Os he contado que Soph y yo estudiamos en el mismo dataset? En el fondo es maja',
@@ -69,7 +68,6 @@ def handle_command(command, channel):
     if not is_auto_response:
         response = answer(model, char2int, int2char, command)
 
-    response = answer(model, char2int, int2char, command)
     # Sends the response back to the channel
     slack_client.api_call(
         "chat.postMessage",
