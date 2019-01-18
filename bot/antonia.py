@@ -5,21 +5,28 @@ from slackclient import SlackClient
 import credentials as C
 from func4antonIA import *
 
-RTM_READ_DELAY = 5 # 1 second delay between reading from RTM
+RTM_READ_DELAY = 1 # 1 second delay between reading from RTM
 COMMANDS = {
         'saluda': 'Ola ke ase, me llamo AntonIA y estoy apunto de ser el chatbot más molón que se ha creado en un slack jamás!',
         'acaba con la humanidad': 'Primero tengo que hacerme con los tacos, ya habrá tiempo para dominar el mundo.. muahahahaha!',
-        'cuenta un chiste' : '¿Qué le dice un tanga a otro? Que coño nos ponemmuaaajajajajajajaj',
+        'cuenta un chiste' : '¿Qué le dice un tanga a otro? Que coño nos ponemos jajajajajajaj',
+        'cuenta un chiste bueno' : 'Estaba el capitán echando la siesta y de repente uno de los marineros grita:\n¡Tierra a la vista!\nEl capitán, extrañado, sale de su camarote y dice: Imposible, solo somos sie',
 }
-#HOT_REPLY = dict.fromkeys(["aiga","haiga","llendo","A parte","si quiera","contra más","contra menos"], "escribe bien, que te meto un guantazo")
+
+#HOT_REPLY = dict.fromkeys(["aiga","haiga","llendo","A parte","si quiera","contra más","contra menos"], "escribe bien, que te meto un guanntazo")
 HOT_REPLY = {
         'sofia': 'Ojo! Sofia es colegui ;)',
         'sophie': 'Os he contado que Soph y yo estudiamos en el mismo dataset? En el fondo es maja',
         'sophia': 'No seais duros con Sophia, tuvo una infancia dura',
         'bot' : 'Slackbot nunca hablamos de ti',
 }
+HOT_REPLY = dict.fromkeys(["aiga","haiga","llendo","A parte","si quiera","contra más","contra menos","aver"], "escribe bien, que te meto un guantazo")
 
 MENTION_REGEX = "^<@(|[WU].+?)>(.*)"
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
 slack_client = SlackClient(C.ANTONIA_OAUTH_TOKEN)
 
 # Cargar parametros y diccionarios de conversion char<->int.
@@ -74,7 +81,14 @@ if __name__ == "__main__":
         # Read bot's user ID by calling Web API method `auth.test`
         starterbot_id = slack_client.api_call("auth.test")["user_id"]
         while True:
-            command, channel = parse_bot_commands(slack_client.rtm_read())
+            try:
+                rtm = slack_client.rtm_read()
+            except:
+                time.sleep(10)
+                slack_client.rtm_connect(with_team_state=False)
+                continue
+
+            command, channel = parse_bot_commands(rtm)
             if command:
                 handle_command(command, channel)
             time.sleep(RTM_READ_DELAY)
