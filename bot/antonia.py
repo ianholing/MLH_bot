@@ -27,7 +27,6 @@ MENTION_REGEX = "^<@(|[WU].+?)>(.*)"
 slack_client = SlackClient(C.ANTONIA_OAUTH_TOKEN)
 random_reply_counter = randint(20, 150)
 
-
 # Cargar parametros y diccionarios de conversion char<->int.
 antonIA='../model/antonIA.pth'
 model, char2int, int2char = load_antonIA(antonIA)
@@ -56,7 +55,6 @@ def parse_bot_commands(slack_events):
             
             # RANDOM REPLIES
             random_reply_counter -= 1
-            print (random_reply_counter)
             if random_reply_counter < 0 and message is not None and event["channel"] is not None:
                 random_reply_counter = randint(20, 150)
                 return message, event["channel"]
