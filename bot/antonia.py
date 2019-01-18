@@ -3,14 +3,15 @@ import time
 import re
 from slackclient import SlackClient
 import credentials as C
+from func4antonIA import *
 
 RTM_READ_DELAY = 5 # 1 second delay between reading from RTM
 COMMANDS = {
         'saluda': 'Ola ke ase, me llamo AntonIA y estoy apunto de ser el chatbot más molón que se ha creado en un slack jamás!',
         'acaba con la humanidad': 'Primero tengo que hacerme con los tacos, ya habrá tiempo para dominar el mundo.. muahahahaha!',
-        'cuenta un chiste' : '¿Qué le dice un tanga a otro? Que coño nos ponemos jajajajajajajaja'
+        'cuenta un chiste' : '¿Qué le dice un tanga a otro? Que coño nos ponemmuaaajajajajajajaj',
 }
-HOT_REPLY = dict.fromkeys(["aiga","haiga","llendo","A parte","si quiera","contra más","contra menos"], "escribe bien, que te meto un guantazo")
+#HOT_REPLY = dict.fromkeys(["aiga","haiga","llendo","A parte","si quiera","contra más","contra menos"], "escribe bien, que te meto un guantazo")
 HOT_REPLY = {
         'sofia': 'Ojo! Sofia es colegui ;)',
         'sophie': 'Os he contado que Soph y yo estudiamos en el mismo dataset? En el fondo es maja',
@@ -19,9 +20,11 @@ HOT_REPLY = {
 }
 
 MENTION_REGEX = "^<@(|[WU].+?)>(.*)"
-
-
 slack_client = SlackClient(C.ANTONIA_OAUTH_TOKEN)
+
+# Cargar parametros y diccionarios de conversion char<->int.
+antonIA='../model/antonIA.pth'
+model, char2int, int2char = load_antonIA(antonIA)
 
 def parse_bot_commands(slack_events):
     #print (slack_events)
@@ -51,12 +54,13 @@ def parse_direct_mention(message_text):
     return user_id, message
 
 def handle_command(command, channel):
-    response = "Perdona pero tengo la IA un poco floja.. los del canal #banco_de_proyectos no me están dando mucha caña eeeeeeh!! (guiño guiño), no sé qué es: " + command
+    #response = "Perdona pero tengo la IA un poco floja.. los del canal #banco_de_proyectos no me están dando mucha caña eeeeeeh!! (guiño guiño), no sé qué es: " + command
 
     for i in range(len(COMMANDS)):
         if list(COMMANDS.keys())[i] in command:
             response = list(COMMANDS.values())[i]
 
+    response = answer(model, char2int, int2char, command)
     # Sends the response back to the channel
     slack_client.api_call(
         "chat.postMessage",
@@ -76,4 +80,3 @@ if __name__ == "__main__":
             time.sleep(RTM_READ_DELAY)
     else:
         print("Connection failed. Exception traceback printed above.")
-

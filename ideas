@@ -1,0 +1,10 @@
+- Preprocesamiento:
+	+ Quitar nombres de usuarios, porque los mete como <@(id)> y nos sirve para nada. 
+	+ Puesto que la llamada a AntonIA es siempre con su nombre al principio, entrenar la red añadiendo delante de cada frase el id que le corresponde.
+
+- Entrenamiento:
+	+ Añadir entrenamiento en batches
+
+- Generación de texto:
+	+ Le digo que cuando encuentre alguno de los símbolos ['.', '?', '!'] deje de escribir. 
+	Esto excluye los links por ejemplo... buscar una forma mejor.
