@@ -3,7 +3,7 @@ import time
 import re
 from slackclient import SlackClient
 import credentials as C
-from func4antonIA import *
+from funcs4antonIA import *
 
 RTM_READ_DELAY = 1 # 1 second delay between reading from RTM
 COMMANDS = {
@@ -23,10 +23,6 @@ HOT_REPLY = {
 HOT_REPLY = dict.fromkeys(["aiga","haiga","llendo","A parte","si quiera","contra más","contra menos","aver"], "escribe bien, que te meto un guantazo")
 
 MENTION_REGEX = "^<@(|[WU].+?)>(.*)"
-<<<<<<< HEAD
-=======
-
->>>>>>> master
 slack_client = SlackClient(C.ANTONIA_OAUTH_TOKEN)
 
 # Cargar parametros y diccionarios de conversion char<->int.
